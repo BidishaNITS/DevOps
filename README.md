@@ -47,5 +47,5 @@ This project replicates that workflow **on my local machine** so I can:
 ## Learning Path in This Repo
 1. [Docker Concepts](concepts/docker.md)
 2. [Kubernetes Concepts](concepts/kubernetes.md)
-3. Terraform (coming soon)
+3. [Terraform Concepts](./concepts/terraform.md)
 4. CI/CD (coming soon)
