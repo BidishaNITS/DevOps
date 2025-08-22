@@ -20,7 +20,6 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t app:ci .
-        
 
   push-image:
     name: Build & push to GHCR
@@ -28,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write    # allow pushing to GitHub Container Registry
+      packages: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -49,10 +48,9 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/app:latest
-            ghcr.io/${{ github.repository_owner }}/app:${{ github.sha }}
+            ghcr.io/bidishanits/app:latest
+            ghcr.io/bidishanits/app:${{ github.sha }}
 
       - name: Show pushed image
-        run: echo "Pushed ghcr.io/${{ github.repository_owner }}/app:latest"
+        run: echo "Pushed ghcr.io/bidishanits/app:latest"
         
-              
