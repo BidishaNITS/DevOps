@@ -5,8 +5,8 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app: myapp
+    app: myapp           # MUST MATCH deployment labels
   ports:
-    - port: 5000
-      targetPort: 5000
-      nodePort: 30007
+  - port: 5000
+    targetPort: 5000
+    nodePort: 30080

@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
       - name: myapp
-        image: app:1.0
-        imagePullPolicy: IfNotPresent
+        image: ghcr.io/bidishanits/app:latest   
+        imagePullPolicy: Always                 
         ports:
         - containerPort: 5000
         readinessProbe:
