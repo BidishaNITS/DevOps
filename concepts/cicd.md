@@ -51,16 +51,16 @@ Full auto‑deploy to Minikube would use a self‑hosted runner on my Mac to run
 ⸻
 
 ### Security Choices
--	•	No personal tokens in code. Uses GitHub’s short‑lived GITHUB_TOKEN.
--	•	Workflow permissions are minimal:
+-	No personal tokens in code. Uses GitHub’s short‑lived GITHUB_TOKEN.
+-	Workflow permissions are minimal:
 
 - permissions:
   - contents: read
   - packages: write
 
 
--	•	Hadolint prevents bad Dockerfile patterns; Trivy reports vulnerabilities.
--	•	.dockerignore avoids leaking local files into the image.
+-	Hadolint prevents bad Dockerfile patterns; Trivy reports vulnerabilities.
+-	.dockerignore avoids leaking local files into the image.
 
 ⸻
 
@@ -73,10 +73,10 @@ Full auto‑deploy to Minikube would use a self‑hosted runner on my Mac to run
 - git push
 
 ### Watch CI
--	•	Repo → Actions → open the latest run.
--	•	Lint Dockerfile (Hadolint) → see best‑practice warnings.
--	•	Scan image with Trivy → see HIGH/CRITICAL CVEs.
--	•	Build and push (multi‑arch) → confirms image pushed to GHCR.
+-	Repo → Actions → open the latest run.
+-	Lint Dockerfile (Hadolint) → see best‑practice warnings.
+-	Scan image with Trivy → see HIGH/CRITICAL CVEs.
+-	Build and push (multi‑arch) → confirms image pushed to GHCR.
 
 - Pull & run the pushed image locally
 
