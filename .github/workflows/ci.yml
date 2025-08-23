@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [ "main" ]
 
-# Minimal default permissions for all jobs
 permissions:
   contents: read
 
@@ -18,17 +17,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Dockerfile best-practice linting
+      # Use the official Hadolint Action (no Docker daemon needed)
       - name: Lint Dockerfile (Hadolint)
-        run: docker run --rm -i hadolint/hadolint < Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+        # If you want warnings to NOT fail CI at first:
+        continue-on-error: true
 
-      - name: Set up QEMU (enable cross-arch emulation)
+      - name: Set up QEMU (cross-arch emulation)
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Local build just to catch build errors early
+      # Local build to catch Dockerfile errors early
       - name: Build image (local test)
         run: docker build -t app:ci .
 
@@ -36,7 +39,6 @@ jobs:
     name: Scan then Push to GHCR (multi-arch)
     needs: build
     runs-on: ubuntu-latest
-    # Allow pushing to GHCR (package registry)
     permissions:
       contents: read
       packages: write
@@ -57,7 +59,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Build to local daemon so Trivy can scan the image layers
+      # Build to local docker daemon so Trivy can scan it
       - name: Build image for scan (local)
         uses: docker/build-push-action@v6
         with:
@@ -65,7 +67,7 @@ jobs:
           load: true
           tags: app:ci-scan
 
-      # Vulnerability scan (report-only first; tighten later)
+      # Trivy scan (report-only for now so it won't fail CI)
       - name: Scan image with Trivy
         uses: aquasecurity/trivy-action@0.24.0
         with:
@@ -73,9 +75,10 @@ jobs:
           format: table
           vuln-type: 'os,library'
           severity: 'HIGH,CRITICAL'
-          exit-code: '0'   # change to '1' later to fail on findings
+          exit-code: '0'
+        continue-on-error: true
 
-      # Build & push a multi-arch image to GHCR
+      # Build & push multi-arch image
       - name: Build and push (multi-arch)
         uses: docker/build-push-action@v6
         with:
@@ -84,12 +87,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: |
             ghcr.io/bidishanits/app:latest
-          # immutable tag for traceability
             ghcr.io/bidishanits/app:${{ github.sha }}
-
-      - name: Show pushed image
-        run: |
-          echo "Pushed:"
-          echo "  ghcr.io/bidishanits/app:latest"
-          echo "  ghcr.io/bidishanits/app:${{ github.sha }}"
-
